@@ -1,0 +1,5 @@
+name: california_housing
+
+entry_points:
+  main:
+    command: "python california_housing.py"
