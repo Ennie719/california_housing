@@ -1,40 +1,75 @@
-# missing values
-from pyexpat import model
+import sys
+from pathlib import Path
+sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 from sklearn.ensemble import RandomForestRegressor
-from sklearn.linear_model import LinearRegression
+import pandas as pd
+from sklearn.metrics import mean_squared_error, r2_score
+from sklearn.model_selection import train_test_split
+from src.preprocessing import load_data, splitting_data
+from src.model_evaluation import model_evaluation
 from sklearn.datasets import fetch_california_housing
-from sklearn.model_selection import train_test_split
-from sklearn.preprocessing import MinMaxScaler, StandardScaler
-import matplotlib.pyplot as plt
-import pandas as pd
-from sklearn.inspection import permutation_importance
-from sklearn.model_selection import train_test_split
-from sklearn.metrics import mean_squared_error
-from sklearn.preprocessing import StandardScaler, MinMaxScaler, RobustScaler
-import numpy as np
-import pandas as pd
-import matplotlib.pyplot as plt
-from sklearn.model_selection import train_test_split
-from sklearn.ensemble import RandomForestClassifier
-from sklearn.tree import DecisionTreeClassifier
-from sklearn.metrics import accuracy_score, precision_score, recall_score, f1_score, confusion_matrix
-from sklearn.metrics import mean_squared_error
-from sklearn.tree import DecisionTreeRegressor
-from sklearn.metrics import mean_squared_error
-from sklearn.ensemble import RandomForestRegressor
-from sklearn.linear_model import LogisticRegression
-import numpy as np
 
-from preprocessing import load_data, dataframe_check, splitting_data, model_training, feature_importance
-
-
-
-def model_training(x_valid , y_valid, x_train, y_train):
+housing = fetch_california_housing(as_frame=True)
+df = housing.frame
+print(f"Duplicate values of dataset: {df.duplicated().sum()}")
+print(f"Missing value of dataset: {df.isnull().sum()}")
+def model_training(df):
     """
     Train a Random Forest Regressor on the training data.
     Returns:
     The trained model.
     """
-    rf = RandomForestRegressor(random_state=42)
-    rf.fit(x_train, y_train)
-    return rf
+    # df_split = df.copy()
+    x_train,x_test, y_train,y_test = splitting_data(df)
+    rf = RandomForestRegressor()
+    rf_fit = rf.fit(x_train, y_train)
+    return rf_fit
+# model = model_training(df)
+# print(model)
+def feature_importance(rf, feature_names):
+    """
+    Calculate feature importance from the fitted Random Forest model.
+    Returns:
+    DataFrame containing features and their importance scores.
+    """
+    if rf is None or feature_names is None:
+        raise ValueError("Model or feature names are None. Please provide valid inputs.")
+    # df = load_data()
+    # rf = model_training()
+    # rf = rf_model(df)
+    importances_val = rf.feature_importances_
+
+    importance_df = pd.DataFrame({
+        'feature': feature_names,
+        'importance': importances_val,
+        'importance_Percent': importances_val * 100
+    }).sort_values('importance', ascending=False)
+
+    return importance_df
+# df_feat = model_training(df)
+# ft = feature_importance(df_feat, x_train.columns)
+# print(ft)
+
+
+# def feature_importance(rf, feature_names):
+#     """
+#     Calculate feature importance from the trained Random Forest model.
+#     Returns:
+#     DataFrame containing features and their importance scores.
+#     """
+#     rf = RandomForestRegressor(n_estimators=100, max_depth=10, random_state=42)
+
+#     # if rf is None or feature_names is None:
+#     #     raise ValueError("Model or feature names are None. Please provide valid inputs.")
+#     # importances_val = rf.feature_importances_
+
+#     importance_df = pd.DataFrame({
+#         'feature': feature_names,
+#         # 'importance': importances_val,
+#         # 'importance_Percent': importances_val * 100
+#     }).sort_values('importance', ascending=False)
+
+#     return importance_df
+# df = load_data()
+# df_imp = feature_importance(df,'HouseAge')
+# print(df_imp)

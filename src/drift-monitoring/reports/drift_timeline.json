@@ -1,0 +1,29 @@
+[
+  {
+    "period": "Month 1",
+    "ref_mean": 2.071,
+    "current_mean": 2.056,
+    "ref_std": 1.152,
+    "current_std": 1.15,
+    "drift_score": 0.015715,
+    "drift_detected": false
+  },
+  {
+    "period": "Month 2",
+    "ref_mean": 2.071,
+    "current_mean": 2.058,
+    "ref_std": 1.152,
+    "current_std": 1.154,
+    "drift_score": 0.015273,
+    "drift_detected": false
+  },
+  {
+    "period": "Month 3",
+    "ref_mean": 2.071,
+    "current_mean": 2.081,
+    "ref_std": 1.152,
+    "current_std": 1.169,
+    "drift_score": 0.015411,
+    "drift_detected": false
+  }
+]

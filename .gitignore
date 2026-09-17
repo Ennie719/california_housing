@@ -33,6 +33,5 @@ Thumbs.db
 logs/
 outputs/
 *.log
-
 # MLflow local tracking
 mlruns/

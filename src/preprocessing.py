@@ -1,50 +1,49 @@
-# missing values
-from pyexpat import model
-import sklearn
-from sklearn.ensemble import RandomForestClassifier
-from sklearn.linear_model import LinearRegression
 from sklearn.datasets import fetch_california_housing
 from sklearn.model_selection import train_test_split
-from sklearn.preprocessing import MinMaxScaler, StandardScaler
-import matplotlib.pyplot as plt
 import pandas as pd
-from sklearn.inspection import permutation_importance
-from sklearn.model_selection import train_test_split
-from sklearn.metrics import mean_squared_error
-from sklearn.preprocessing import StandardScaler, MinMaxScaler, RobustScaler
-import numpy as np
-from sklearn.ensemble import RandomForestRegressor
+from sklearn.preprocessing import StandardScaler
 
-def load_data(df):
+def load_data():
     """
-    df (pd.DataFrame): The DataFrame to validate.
-
     Returns:
-    True if the DataFrame is valid, False otherwise.
+    The California housing data as a DataFrame.
     """  
-    if df is None:
-        housing = fetch_california_housing(as_frame=True)
-        df = housing.frame
-        raise ValueError("DataFrame is None. Please provide a valid DataFrame.")
+    return fetch_california_housing(as_frame=True).frame
+# df = load_data()
+# print(df.info())
+def encode_categoricals(df, columns):
+    """One-hot encode categorical columns."""
+    df = df.copy()
+    df = pd.get_dummies(df, columns=columns, drop_first=True, dtype=int)
     return df
-def dataframe_check(df):
+# df = encode_categoricals(load_data(),['HouseAge'])
+# print(df.head())
+def check_missing_values(df):
     """
-    Validate the input DataFrame for duplicates and missing values.
+    Check for missing values in the DataFrame.
     Returns:
-    True if the DataFrame is clean, False otherwise.
+    A boolean indicating if there are missing values.
     """
     if df is None:
-        df = df.copy()  # Create a copy to avoid modifying the original DataFrame
-        duplicate_count = df.duplicated().sum()
-        missing_values_count = df.isnull().sum()
-        raise ValueError(f"DataFrame is None. Duplicate values: {duplicate_count}, Missing values: {missing_values_count}")
-    Returns: df
-# feature scaling   
+        raise ValueError("DataFrame is None. Please provide a valid DataFrame.")
+    
+    return df.isnull().values.any()
+def check_duplicates(df):
+    """
+    Check for duplicate rows in the DataFrame.
+    Returns:
+    A boolean indicating if there are duplicate rows.
+    """
+    if df is None:
+        raise ValueError("DataFrame is None. Please provide a valid DataFrame.")
+    
+    return df.duplicated().any()
+
 def splitting_data(df):
     """
-    Perform feature scaling on the input DataFrame.
+    Split the input DataFrame into training and validation data.
     Returns:
-    Scaled features and target variable.
+    Training and validation features and targets.
     """
     if df is None:
         raise ValueError("DataFrame is None. Please provide a valid DataFrame.")
@@ -52,90 +51,44 @@ def splitting_data(df):
     target = df['MedHouseVal']
     features = df.drop('MedHouseVal', axis=1)
     
-    X_temp, X_test, y_temp, Y_test = train_test_split(
+    x_train, x_test, y_train, y_test = train_test_split(
         features, target, test_size=0.25, random_state=42
     )
-    
-    x_train, x_valid, y_train, y_valid = train_test_split(
-        X_temp, y_temp, test_size=0.25, random_state=42
-    )
-    
-    return x_train, x_valid, y_train, y_valid
-# target = df['MedHouseVal']
-# features = df.drop('MedHouseVal', axis=1)
-# X_temp, X_test, y_temp, Y_test = train_test_split(
-#     features, target, test_size=0.25, random_state=42
-# )
-# x_train, x_valid, y_train, y_valid = train_test_split(
-#     X_temp, y_temp, test_size=0.25, random_state=42
-# )
-def model_traininggg(x_valid , y_valid, x_train, y_train):
+
+    return x_train, x_test, y_train, y_test
+
+# df = splitting_data(load_data())
+# print(f"Split data shapes - X_train: {df[0].shape[0]}, X_test: {df[1].shape[0]}, y_train: {df[2].shape[0]}, y_test: {df[3].shape[0]}")
+def scale_features(x_train, x_test):
     """
-    Train a Random Forest Regressor on the training data.
+    Scale the features using StandardScaler.
     Returns:
-    Trained model.
+    Scaled training and validation features.
     """
-    if x_train is None or y_train is None:
-        raise ValueError("Training data is None. Please provide valid training data.")
+    if x_train is None or x_test is None:
+        raise ValueError("Training or test features are None. Please provide valid inputs.")
     
-    rf = RandomForestRegressor()
-    rf.fit(x_valid, y_valid)
-    
-    return rf
-def feature_importance(rf, feature_names):
+    scaler = StandardScaler()
+    x_train_scaled = scaler.fit_transform(x_train)
+    x_test_scaled = scaler.transform(x_test)
+
+    return x_train_scaled, x_test_scaled
+# df = load_data()
+# df_scaled = encode_categoricals(df, ['HouseAge'])
+# print(f"Feature scaling completed. Scaled DataFrame shape: {df_scaled.shape}")
+def feature_target_corr():
     """
-    Calculate feature importance from the trained Random Forest model.
+    Calculate the correlation between features and the target variable.
     Returns:
-    DataFrame containing features and their importance scores.
+    A DataFrame containing features and their correlation with the target.
     """
-    if rf is None or feature_names is None:
-        raise ValueError("Model or feature names are None. Please provide valid inputs.")
+    df = load_data()
+    if df is None:
+        raise ValueError("DataFrame is None. Please provide a valid DataFrame.")
     
-    importances_val = rf.feature_importances_
-    
-    importance_df = pd.DataFrame({
-        'feature': feature_names,
-        'importance': importances_val,
-        'importance_Percent': importances_val * 100
-    }).sort_values('importance', ascending=False)
-    
+    corr_matrix = df.corr()
+    target_corr = corr_matrix['MedHouseVal'].drop('MedHouseVal')
+    importance_df = target_corr[target_corr > 0.1].sort_values(ascending=False)
     return importance_df
-# rf = RandomForestRegressor()
-# rf.fit(x_train, y_train)
-# # model.fit(x_train, y_train)  
-# importance = rf.feature_importances_ 
-
-# importance = pd.DataFrame({
-#     'feature': feature_names,
-#     'importance': importances_val,
-#         'importance_Percent': importances_val * 100
-# }).sort_values('importance', ascending=False)
-
-# predictions = model.predict(x_valid)
-# mse = mean_squared_error(y_valid, predictions)
-# print(f"Mean Squared Error: {mse}")
-# # print(f"Model Coefficients: {model.coef_}")
-# std_scaler = StandardScaler()
-# minmax_scaler = MinMaxScaler()
-# robust_scaler = RobustScaler()
-# df_standardized = pd.DataFrame(std_scaler.fit_transform(df), columns=df.columns)
-# df_minmax = pd.DataFrame(minmax_scaler.fit_transform(df), columns=df.columns)
-# df_robust = pd.DataFrame(robust_scaler.fit_transform(df), columns=df.columns)
-
-# print("Standardized:\n", df_standardized)
-# print("\nMin-Max Scaled:\n", df_minmax)
-# print("\nRobust Scaled:\n", df_robust)
-
-# result = permutation_importance(
-#     model, x_valid, y_valid, n_repeats=10, random_state=42, n_jobs=-1
-
-# )
-
-
-# MinMaxScaler = df.copy()
-# scaler = MinMaxScaler()
-# MinMaxScaler = MinMaxScaler.fit_transform(MinMaxScaler[columns])
-# print(f"MinMaxScaler: {MinMaxScaler}")
-
-# categoical variables
-# splitting the data into train and test sets
+# df = feature_target_corr()
+# print(f"Feature-target correlation:\n{df}")

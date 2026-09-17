@@ -1,51 +1,24 @@
-from sklearn.datasets import fetch_california_housing
-
-#  - MedInc        median income in block group
-#     - HouseAge      median house age in block group
-#     - AveRooms      average number of rooms per household
-#     - AveBedrms     average number of bedrooms per household
-#     - Population    block group population
-#     - AveOccup      average number of household members
-#     - Latitude      block group latitude
-#     - Longitude     block group longitude
 import mlflow
 import mlflow.sklearn
-from sklearn.ensemble import RandomForestRegressor
-from sklearn.metrics import mean_squared_error, r2_score
-from sklearn.model_selection import train_test_split
+from src.model_evaluation import model_evaluation
+from src.model_training import model_training
+from src.preprocessing import dataframe_check, load_config, load_data, splitting_data
 
 def main():
-	housing = fetch_california_housing(as_frame=True)
-	features = housing.data
-	target = housing.target
-	x_train, x_test, y_train, y_test = train_test_split(
-		features, target, test_size=0.25, random_state=42
+	config = load_config("configs/config.yaml")
+	df = dataframe_check(load_data())
+	x_train, x_valid, y_train, y_valid = splitting_data(
+		df, config["test_size"], config["random_state"]
 	)
+	model = model_training(x_train, y_train, config["model"]["params"])
 
-	model_params = {
-		"n_estimators": 100,
-		"max_depth": 10,
-		"random_state": 42,
-	}
-	model = RandomForestRegressor(**model_params)
-
+	mlflow.set_experiment("California Housing")
 	with mlflow.start_run():
-		model.fit(x_train, y_train)
-		predictions = model.predict(x_test)
-
-		mlflow.log_params(model_params)
-		mlflow.log_metrics(
-			{
-				"mse": mean_squared_error(y_test, predictions),
-				"rmse": mean_squared_error(y_test, predictions) ** 0.5,
-				"r2": r2_score(y_test, predictions),
-			}
-		)
+		mse, rmse, r2 = model_evaluation(model, x_valid, y_valid)
+		mlflow.log_params(model.get_params())
+		mlflow.log_metrics({"mse": mse, "rmse": rmse, "r2": r2})
 		mlflow.sklearn.log_model(model, "model")
-
-		print(f"RMSE: {mean_squared_error(y_test, predictions) ** 0.5:.4f}")
-		print(f"R2: {r2_score(y_test, predictions):.4f}")
-
+    # return df
 
 if __name__ == "__main__":
 	main()
