@@ -19,6 +19,7 @@ def check_drift(reference_path, current_path):
 
     result = report.as_dict()
     drift_data = result["metrics"][0]["result"]
+    column_drift_data = result["metrics"][1]["result"]
 
     total = drift_data["number_of_columns"]
     drifted = drift_data["number_of_drifted_columns"]
@@ -31,6 +32,7 @@ def check_drift(reference_path, current_path):
         "drift_share": round(share, 3),
         "dataset_drift": drift_data["dataset_drift"],
         "status": "ok",
+        # "drifted_feature_names"
     }
 
     # Determine status
@@ -41,11 +43,11 @@ def check_drift(reference_path, current_path):
 
     # List drifted features
     drifted_features = []
-    for feature_name, feature_data in drift_data.get("drift_by_columns", {}).items():
+    for feature_name, feature_data in column_drift_data.get("drift_by_columns", {}).items():
         if feature_data["drift_detected"]:
             drifted_features.append(feature_name)
     check_result["drifted_feature_names"] = drifted_features
-
+    # print(drift_data)
     return check_result
 
 if __name__ == "__main__":

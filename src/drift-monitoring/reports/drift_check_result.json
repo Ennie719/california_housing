@@ -1,8 +1,13 @@
 {
   "total_features": 9,
-  "drifted_features": 2,
-  "drift_share": 0.222,
+  "drifted_features": 4,
+  "drift_share": 0.444,
   "dataset_drift": false,
-  "status": "warning",
-  "drifted_feature_names": []
+  "status": "critical",
+  "drifted_feature_names": [
+    "AveBedrms",
+    "HouseAge",
+    "MedInc",
+    "Population"
+  ]
 }
