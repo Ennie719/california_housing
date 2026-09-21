@@ -13,14 +13,8 @@ def model_evaluation(model, x_test, y_test):
     rmse_rf_tuned = np.sqrt(mse_rf_tuned)
     r2_rf_tuned = r2_score(y_test, predictions)
     print("Metrics:")
-    # print(f"predictions: {predictions}")
     print(f"MSE:  {mse_rf_tuned:.4f}")
     print(f"RMSE: {rmse_rf_tuned:.4f}")
     print(f"R²:   {r2_rf_tuned:.1%}")
     print()
-    return mse_rf_tuned, rmse_rf_tuned, r2_rf_tuned,predictions
-# df = load_data()
-# model_eva= model_training(df)
-# x_train, x_test, y_train, y_test = splitting_data(df)
-
-# df_model_evaluation = model_evaluation(model_eva, x_test, y_test)
+    return mse_rf_tuned, rmse_rf_tuned, r2_rf_tuned

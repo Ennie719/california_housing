@@ -1,5 +1,4 @@
 # Data and models (tracked by DVC instead)
-data/
 models/
 *.pkl
 *.joblib
@@ -20,6 +19,7 @@ __pycache__/
 *.pyc
 .venv/
 env/
+.venv311/
 
 # IDE
 .vscode/

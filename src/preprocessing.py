@@ -2,6 +2,7 @@ from sklearn.datasets import fetch_california_housing
 from sklearn.model_selection import train_test_split
 import pandas as pd
 from sklearn.preprocessing import StandardScaler
+import yaml
 
 def load_data():
     """
@@ -9,15 +10,13 @@ def load_data():
     The California housing data as a DataFrame.
     """  
     return fetch_california_housing(as_frame=True).frame
-# df = load_data()
-# print(df.info())
+
 def encode_categoricals(df, columns):
     """One-hot encode categorical columns."""
     df = df.copy()
     df = pd.get_dummies(df, columns=columns, drop_first=True, dtype=int)
     return df
-# df = encode_categoricals(load_data(),['HouseAge'])
-# print(df.head())
+
 def check_missing_values(df):
     """
     Check for missing values in the DataFrame.
@@ -39,7 +38,7 @@ def check_duplicates(df):
     
     return df.duplicated().any()
 
-def splitting_data(df):
+def splitting_data(df, test_size=0.25, random_state=42):
     """
     Split the input DataFrame into training and validation data.
     Returns:
@@ -52,13 +51,11 @@ def splitting_data(df):
     features = df.drop('MedHouseVal', axis=1)
     
     x_train, x_test, y_train, y_test = train_test_split(
-        features, target, test_size=0.25, random_state=42
+        features, target, test_size=test_size, random_state=random_state
     )
 
     return x_train, x_test, y_train, y_test
 
-# df = splitting_data(load_data())
-# print(f"Split data shapes - X_train: {df[0].shape[0]}, X_test: {df[1].shape[0]}, y_train: {df[2].shape[0]}, y_test: {df[3].shape[0]}")
 def scale_features(x_train, x_test):
     """
     Scale the features using StandardScaler.
@@ -73,9 +70,6 @@ def scale_features(x_train, x_test):
     x_test_scaled = scaler.transform(x_test)
 
     return x_train_scaled, x_test_scaled
-# df = load_data()
-# df_scaled = encode_categoricals(df, ['HouseAge'])
-# print(f"Feature scaling completed. Scaled DataFrame shape: {df_scaled.shape}")
 def feature_target_corr():
     """
     Calculate the correlation between features and the target variable.
@@ -90,5 +84,7 @@ def feature_target_corr():
     target_corr = corr_matrix['MedHouseVal'].drop('MedHouseVal')
     importance_df = target_corr[target_corr > 0.1].sort_values(ascending=False)
     return importance_df
-# df = feature_target_corr()
-# print(f"Feature-target correlation:\n{df}")
+def load_config(path):
+    """Load config yaml file"""
+    with open(path, "r", encoding="utf-8") as config_file:
+        return yaml.safe_load(config_file)

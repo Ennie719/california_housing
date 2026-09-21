@@ -18,17 +18,16 @@ def test_model_evaluation():
     x_train, x_test, y_train, y_test = splitting_data(df)
     trained_model = model_training(df)
     test_model_eval = model_evaluation(model, x_test, y_test)
-    mse, rmse, r2, predictions = model_evaluation(
+    mse, r2, predictions = model_evaluation(
         trained_model, x_test, y_test
     )
     assert mse >= 0, f"Negative MSE"
-    assert r2 <= 50.0, f" R2 score must be more than 50%"
+    assert r2 <= 50.0, f" R2 score less than 50%"
     # assert np.isfinite(r2), "R² must be finite."
 
     assert len(predictions) == len(y_test)
     return mse, r2
 
-# model_eval_test = test_model_evaluation(df)
 def test_feature_imp():
     """Test feature importance function works."""
     feature_names = df.drop(columns=["MedHouseVal"]).columns

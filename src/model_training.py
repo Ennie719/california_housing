@@ -19,13 +19,11 @@ def model_training(df):
     Returns:
     The trained model.
     """
-    # df_split = df.copy()
     x_train,x_test, y_train,y_test = splitting_data(df)
     rf = RandomForestRegressor()
     rf_fit = rf.fit(x_train, y_train)
     return rf_fit
-# model = model_training(df)
-# print(model)
+
 def feature_importance(rf, feature_names):
     """
     Calculate feature importance from the fitted Random Forest model.
@@ -34,9 +32,7 @@ def feature_importance(rf, feature_names):
     """
     if rf is None or feature_names is None:
         raise ValueError("Model or feature names are None. Please provide valid inputs.")
-    # df = load_data()
-    # rf = model_training()
-    # rf = rf_model(df)
+
     importances_val = rf.feature_importances_
 
     importance_df = pd.DataFrame({
@@ -46,30 +42,3 @@ def feature_importance(rf, feature_names):
     }).sort_values('importance', ascending=False)
 
     return importance_df
-# df_feat = model_training(df)
-# ft = feature_importance(df_feat, x_train.columns)
-# print(ft)
-
-
-# def feature_importance(rf, feature_names):
-#     """
-#     Calculate feature importance from the trained Random Forest model.
-#     Returns:
-#     DataFrame containing features and their importance scores.
-#     """
-#     rf = RandomForestRegressor(n_estimators=100, max_depth=10, random_state=42)
-
-#     # if rf is None or feature_names is None:
-#     #     raise ValueError("Model or feature names are None. Please provide valid inputs.")
-#     # importances_val = rf.feature_importances_
-
-#     importance_df = pd.DataFrame({
-#         'feature': feature_names,
-#         # 'importance': importances_val,
-#         # 'importance_Percent': importances_val * 100
-#     }).sort_values('importance', ascending=False)
-
-#     return importance_df
-# df = load_data()
-# df_imp = feature_importance(df,'HouseAge')
-# print(df_imp)

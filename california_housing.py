@@ -2,15 +2,16 @@ import mlflow
 import mlflow.sklearn
 from src.model_evaluation import model_evaluation
 from src.model_training import model_training
-from src.preprocessing import dataframe_check, load_config, load_data, splitting_data
+from src.preprocessing import load_config, load_data, splitting_data
 
 def main():
 	config = load_config("configs/config.yaml")
-	df = dataframe_check(load_data())
+	df = load_data()
 	x_train, x_valid, y_train, y_valid = splitting_data(
-		df, config["test_size"], config["random_state"]
+		df,
+  config["test_size"], config["random_state"]
 	)
-	model = model_training(x_train, y_train, config["model"]["params"])
+	model = model_training(df)
 
 	mlflow.set_experiment("California Housing")
 	with mlflow.start_run():
