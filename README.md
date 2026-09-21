@@ -121,25 +121,29 @@ python detect_drift.py
 
 ## Current Drift Findings
 
-For the Month 2 comparison, two of nine features exceeded Evidently's drift
+For the Month 2 comparison, four of nine features exceeded Evidently's drift
 threshold of `0.1`:
 
-| Feature | Drift score | Interpretation |
-| --- | ---: | --- |
-| `MedInc` | 0.522 | Strong change in the median-income distribution |
-| `AveOccup` | 0.213 | Moderate change in average household occupancy |
+| Feature | Interpretation |
+| --- | --- |
+| `AveBedrms` | Change in the average number of bedrooms per household |
+| `HouseAge` | Change in the housing-age distribution |
+| `MedInc` | Change in the median-income distribution |
+| `Population` | Change in the population distribution |
 
-The other seven features remained below the threshold. The drift share was
-22.2%, which triggered the warning threshold of 20% but not the critical
-threshold of 40%. The dataset-level drift flag was `False`.
+The other five features remained below the threshold. The drift share was
+44.4%, which triggered the critical threshold of 40%. This sets the status to
+`critical`, so `drift_check.py` exits with a non-zero status. If this check is
+run in CI, the pipeline will therefore fail until the drift is investigated.
+The dataset-level drift flag was `False`.
 
 ### Expected Impact And Action
 
 This drift could affect model performance. `MedInc` is likely an important
 predictor of house value, and a large distribution change can move new inputs
-away from the training population. `AveOccup` may also matter if its
-relationship with house value changes. Drift alone does not prove that model
-accuracy has declined.
+away from the training population. The other drifted features may also matter
+if their relationships with house value change. Drift alone does not prove
+that model accuracy has declined.
 
 The recommended action is to investigate and continue monitoring. Check for
 data-pipeline issues and evaluate the model on newly labeled data using RMSE
