@@ -1,6 +1,11 @@
+import sys
+from pathlib import Path
+sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 from sklearn.metrics import mean_squared_error
 from sklearn.metrics import r2_score
 import numpy as np
+from src.model_training import model_training
+from src.preprocessing import splitting_data, load_data
 
 def model_evaluation(model, x_test, y_test):
     """
@@ -17,4 +22,11 @@ def model_evaluation(model, x_test, y_test):
     print(f"RMSE: {rmse_rf_tuned:.4f}")
     print(f"R²:   {r2_rf_tuned:.1%}")
     print()
-    return mse_rf_tuned, rmse_rf_tuned, r2_rf_tuned
+    return mse_rf_tuned, r2_rf_tuned
+# if name == "main":
+df = load_data()
+df_rf= model_training(df)
+x_train, x_test, y_train, y_test =  splitting_data(df)
+# test_size=0.25, random_state=42)
+test = model_evaluation(df_rf, x_test, y_test)
+test

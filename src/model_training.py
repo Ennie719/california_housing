@@ -6,7 +6,6 @@ import pandas as pd
 from sklearn.metrics import mean_squared_error, r2_score
 from sklearn.model_selection import train_test_split
 from src.preprocessing import load_data, splitting_data
-from src.model_evaluation import model_evaluation
 from sklearn.datasets import fetch_california_housing
 
 housing = fetch_california_housing(as_frame=True)
@@ -20,10 +19,19 @@ def model_training(df):
     The trained model.
     """
     x_train,x_test, y_train,y_test = splitting_data(df)
-    rf = RandomForestRegressor()
+    rf = RandomForestRegressor(
+    n_estimators = 500,
+    max_depth = 20,
+    min_samples_split = 5)
     rf_fit = rf.fit(x_train, y_train)
+    
     return rf_fit
-
+df_test = load_data()
+rf = model_training(df_test)
+rf
+# if __name__ == "__main__":
+#     from src.model_training import model_training
+    # ...
 def feature_importance(rf, feature_names):
     """
     Calculate feature importance from the fitted Random Forest model.
