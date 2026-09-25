@@ -19,7 +19,6 @@ def check_drift(reference_path, current_path):
 
     result = report.as_dict()
     drift_data = result["metrics"][0]["result"]
-    column_drift_data = result["metrics"][1]["result"]
 
     total = drift_data["number_of_columns"]
     drifted = drift_data["number_of_drifted_columns"]
