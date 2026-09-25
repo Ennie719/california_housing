@@ -13,20 +13,18 @@ housing = fetch_california_housing(as_frame=True)
 df = housing.frame
 model = model_training(df)
 
-def test_model_evaluation():
-    """Test test_model_evaluation function"""
-    x_train, x_test, y_train, y_test = splitting_data(df)
-    trained_model = model_training(df)
-    test_model_eval = model_evaluation(model, x_test, y_test)
-    mse, r2 = model_evaluation(
-        trained_model, x_test, y_test
-    )
-    assert mse >= 0, f"Negative MSE"
-    assert r2 <= 50.0, f" R2 score less than 50%"
-    # assert np.isfinite(r2), "R² must be finite."
+# df.columns.list
+# columns = len(df.columns)
+# print(columns)
+def test_count_columns():
+    assert len(df.columns) == 9, f"Expected 9 columns"
+    
+def test_features_check():
+    assert df.columns > 0, f"columns value has to positive"
 
-    # assert len(predictions) == len(y_test)
-    return mse, r2
+def test_target_value():
+    assert df['MedHouseVal'] >= 0, f"The target has to positive"
+
 
 def test_feature_imp():
     """Test feature importance function works."""

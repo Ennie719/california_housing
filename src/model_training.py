@@ -6,32 +6,30 @@ import pandas as pd
 from sklearn.metrics import mean_squared_error, r2_score
 from sklearn.model_selection import train_test_split
 from src.preprocessing import load_data, splitting_data
-from sklearn.datasets import fetch_california_housing
+import yaml
 
-housing = fetch_california_housing(as_frame=True)
-df = housing.frame
-print(f"Duplicate values of dataset: {df.duplicated().sum()}")
-print(f"Missing value of dataset: {df.isnull().sum()}")
-def model_training(df):
+def model_training(df, config_yaml):
     """
     Train a Random Forest Regressor on the training data.
     Returns:
     The trained model.
     """
-    x_train,x_test, y_train,y_test = splitting_data(df)
-    rf = RandomForestRegressor(
-    n_estimators = 500,
-    max_depth = 20,
-    min_samples_split = 5)
-    rf_fit = rf.fit(x_train, y_train)
-    
+    with open(config_yaml) as f:
+        config = yaml.safe_load(f)
+        params = config["model"]
+        # print(params["n_estimators"])
+        x_train,x_test, y_train,y_test = splitting_data(df)
+
+        rf = RandomForestRegressor(n_estimators = params["n_estimators"],
+                                max_depth = params["max_depth"],
+                                min_samples_split = params["min_samples_split"])
+        rf_fit = rf.fit(x_train, y_train)
     return rf_fit
-df_test = load_data()
-rf = model_training(df_test)
-rf
-# if __name__ == "__main__":
-#     from src.model_training import model_training
-    # ...
+
+if __name__ == "__main__":
+    df = load_data()
+    check_train = model_training(df, "configs/config.yaml")
+    print(check_train)
 def feature_importance(rf, feature_names):
     """
     Calculate feature importance from the fitted Random Forest model.

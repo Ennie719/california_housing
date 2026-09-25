@@ -8,7 +8,8 @@
 
 name: California_Housing_Prediction
 data: 
-  path: "/Users/enkhjin/Desktop/california_house_sp17/california_housing.csv"
+  as_frame: True
+  path: data/raw/housing_raw_data.csv
   version: "1.0"
 
 Model_type: "RandomForestRegressor"
@@ -17,10 +18,9 @@ random_state: 42
 
 model: 
   type: random_forest
-  params:
-    n_estimators: 500
-    max_depth: 20
-    min_samples_split: 5
+  n_estimators: 500
+  max_depth: 20
+  min_samples_split: 5
     # class_weight: balanced
     # learning_rate: 0.01
 

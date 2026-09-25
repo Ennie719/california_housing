@@ -9,8 +9,14 @@ def load_data():
     Returns:
     The California housing data as a DataFrame.
     """  
-    return fetch_california_housing(as_frame=True).frame
-
+    with open("configs/config.yaml") as f:
+        config = yaml.safe_load(f)
+        df = fetch_california_housing(as_frame=config["data"]["as_frame"]).frame
+    return df
+    # df = fetch_california_housing(as_frame=True).frame
+    # return df.drop_duplicates().reset_index(drop=True)
+if __name__ == "__main__":
+    df = load_data()
 def encode_categoricals(df, columns):
     """One-hot encode categorical columns."""
     df = df.copy()
@@ -46,7 +52,7 @@ def splitting_data(df, test_size=0.25, random_state=42):
     """
     if df is None:
         raise ValueError("DataFrame is None. Please provide a valid DataFrame.")
-    
+    # print(df)
     target = df['MedHouseVal']
     features = df.drop('MedHouseVal', axis=1)
     

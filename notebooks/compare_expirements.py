@@ -11,7 +11,6 @@ def get_all_experiment_ids():
         if experiment.lifecycle_stage == "active"
     ]
 
-
 def search_runs():
     """Return completed runs across all active experiments."""
     all_experiment_ids = get_all_experiment_ids()
@@ -21,5 +20,16 @@ def search_runs():
         order_by=["start_time DESC"],
     )
 
+def best_run():
+    """Find out which model performs the best."""
+    experiment = mlflow.get_experiment_by_name("California Housing")
+    runs = mlflow.search_runs(
+        experiment_ids=[experiment.experiment_id],
+        filter_string="status = 'FINISHED'",
+        order_by=["metrics.r2_score DESC"],
+        # best_run =[]
+    )
+    return runs.iloc[0]
+best_run()
 
-print(search_runs())
+# print(search_runs())

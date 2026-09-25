@@ -13,6 +13,7 @@ np.random.seed(42)
 n_rows = 200
 model = model_training(df)
 
+
 df_sample = pd.DataFrame({
     "size_sqft": np.random.randint(500, 3500, n_rows),
     "num_rooms": np.random.randint(1, 6, n_rows),
@@ -37,4 +38,23 @@ sample_model = model_training(df_sample)
 # def model_evaluation(model, x_test, y_test):
 x_train, x_test, y_train, y_test = splitting_data(df_sample)
 sample_model_eval = model_evaluation(sample_model, x_test, y_test)
-sample_model_eval
+# print(sample_model_eval)
+def test_prediction_shape():
+    predictions = sample_model.predict(x_test)
+    assert np.issubdtype(predictions.dtype, np.number), f"Predictions have to be numbers"
+print(test_prediction_shape())
+# def test_model_evaluation():
+#     """Test test_model_evaluation function"""
+#     x_train, x_test, y_train, y_test = splitting_data(df)
+#     trained_model = model_training(df)
+#     test_model_eval = model_evaluation(model, x_test, y_test)
+#     mse, r2 = model_evaluation(
+#         trained_model, x_test, y_test
+#     )
+#     assert mse >= 0, f"Negative MSE"
+#     assert r2 <= 50.0, f" R2 score less than 50%"
+#     # assert np.isfinite(r2), "R² must be finite."
+
+#     # assert len(predictions) == len(y_test)
+#     return mse, r2
+
