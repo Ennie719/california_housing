@@ -21,14 +21,4 @@ model:
   n_estimators: 500
   max_depth: 20
   min_samples_split: 5
-    # class_weight: balanced
-    # learning_rate: 0.01
 
-   # best_r2 = float('-inf')
-    # best_params = {}
-    # best_model = None
-    # param_grid = {
-    #         'max_depth': [2, 5, 10, 15, 50],
-    #         'min_samples_split': [2, 10, 20],
-    #         'n_estimators': [100, 200]
-    #     }

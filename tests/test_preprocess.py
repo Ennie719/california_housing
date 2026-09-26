@@ -11,10 +11,6 @@ from src.preprocessing import load_data, splitting_data
 from src.model_training import model_training, feature_importance
 from sklearn.datasets import fetch_california_housing
 
-housing = fetch_california_housing(as_frame=True)
-df = housing.frame
-model = model_training(df)
-
 def test_data_load():
     df = load_data()
     assert not df.empty, "DataFrame is empty. Data loading failed."
@@ -48,9 +44,9 @@ def test_splitting_data():
 def test_feature_target_corr():
     """Test the calculation of feature-target correlation."""
     df = load_data()
-    corr_df = feature_target_corr()
+    corr_df = feature_target_corr(df)
     assert not corr_df.empty, "Feature-target correlation calculation failed."
     # assert 'MedHouseVal' in corr_df, "Correlation DataFrame does not contain target column."
 df = load_data()
-corr_df = feature_target_corr()
+corr_df = feature_target_corr(df)
 print(corr_df)

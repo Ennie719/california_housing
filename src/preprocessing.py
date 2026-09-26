@@ -4,6 +4,12 @@ import pandas as pd
 from sklearn.preprocessing import StandardScaler
 import yaml
 
+
+def load_config(path):
+    """Load config yaml file"""
+    with open(path, "r", encoding="utf-8") as config_file:
+        return yaml.safe_load(config_file)
+    
 def load_data():
     """
     Returns:
@@ -15,8 +21,8 @@ def load_data():
     return df
     # df = fetch_california_housing(as_frame=True).frame
     # return df.drop_duplicates().reset_index(drop=True)
-if __name__ == "__main__":
-    df = load_data()
+# if __name__ == "__main__":
+#     df = load_data()
 def encode_categoricals(df, columns):
     """One-hot encode categorical columns."""
     df = df.copy()
@@ -43,8 +49,9 @@ def check_duplicates(df):
         raise ValueError("DataFrame is None. Please provide a valid DataFrame.")
     
     return df.duplicated().any()
-
-def splitting_data(df, test_size=0.25, random_state=42):
+with open("configs/config.yaml") as f:
+        config = yaml.safe_load(f)
+def splitting_data(df, test_size=config["test_size"], random_state=config["random_state"]):
     """
     Split the input DataFrame into training and validation data.
     Returns:
@@ -61,7 +68,11 @@ def splitting_data(df, test_size=0.25, random_state=42):
     )
 
     return x_train, x_test, y_train, y_test
+if __name__ == "__main__":
 
+    df = load_data()
+    df_split = splitting_data(df)
+    print(df_split)
 def scale_features(x_train, x_test):
     """
     Scale the features using StandardScaler.
@@ -76,13 +87,12 @@ def scale_features(x_train, x_test):
     x_test_scaled = scaler.transform(x_test)
 
     return x_train_scaled, x_test_scaled
-def feature_target_corr():
+def feature_target_corr(df):
     """
     Calculate the correlation between features and the target variable.
     Returns:
     A DataFrame containing features and their correlation with the target.
     """
-    df = load_data()
     if df is None:
         raise ValueError("DataFrame is None. Please provide a valid DataFrame.")
     
@@ -90,7 +100,3 @@ def feature_target_corr():
     target_corr = corr_matrix['MedHouseVal'].drop('MedHouseVal')
     importance_df = target_corr[target_corr > 0.1].sort_values(ascending=False)
     return importance_df
-def load_config(path):
-    """Load config yaml file"""
-    with open(path, "r", encoding="utf-8") as config_file:
-        return yaml.safe_load(config_file)
